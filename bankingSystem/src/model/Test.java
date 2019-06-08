@@ -1,13 +1,15 @@
 package model;
 
-
-
-
 public class Test {
 	public static void main(String[] args) throws Exception
 	{
-		Server server = new Server();
-		
+		DataBase dataBase = new DataBase();
+		Server server = new Server(dataBase);
+		dataBase.fillWithSampleJSON("MOCK_DATA.json");
+		if(!server.start(6666))
+			return;
+		server.spin();
+		server.close();
 	}
 
 }

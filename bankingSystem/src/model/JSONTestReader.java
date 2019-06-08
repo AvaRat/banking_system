@@ -16,7 +16,7 @@ public class JSONTestReader {
 	public ArrayList<Person> readJSON() throws Exception 
 	{
 		File file = new File(path);
-		String content = FileUtils.readFileToString(file, "utf-8");
+		String content = FileUtils.readFileToString(file, "UTF-8");
 		JSONArray arr = new JSONArray(content);
 		
 		ArrayList<Person> personList = new ArrayList<Person>();

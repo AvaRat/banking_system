@@ -11,7 +11,7 @@ public class Client extends Account {
 	public Client(Person person, String passwd)
 	{
 		personalData = person;
-		login = personalData.getName();
+		login = person.getName();
 		password = passwd;
 	}
 	
@@ -20,6 +20,10 @@ public class Client extends Account {
 		Transfer transfer = new Transfer(this, receiver, value);
 		receiver.transferIn(transfer);
 		transferOut(transfer);
+	}
+	public boolean checkPassword(String passwd)
+	{
+		return password.contentEquals(passwd);
 	}
 	
 	public void setPassword(String oldPassword, String newPassword)
