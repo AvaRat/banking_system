@@ -28,8 +28,10 @@ public class Server {
         out = new PrintWriter(clientSocket.getOutputStream(), true);
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         
+        boolean authSuccess = false;    
         int n_try = 1;
-        for(; n_try<=3; n_try++)
+        
+        for(; n_try<=3 && authSuccess==false; n_try++)
         {
         	System.out.print("ok. waiting for a messages...\t");
 	        while(!in.ready()) {}
@@ -37,44 +39,29 @@ public class Server {
 	        JSONObject json = new JSONObject(in.readLine());
 	        System.out.println("msg read");
 	        JSONObject response = new JSONObject();
+	        
+	        String infoMsg = "";
 	        try
 	        {
-	        	if(authenticate(json.getString("login"), json.getString("password")) == true)
-	        	{
-	        		
-	        		response.put("operation_status", true);
-	        		response.put("info", "success");
-	        		System.out.println("succesfully logged in");
-	        		out.println(response.toString());
-	        		
-	        		break;
-	        	}else
-	        	{
-	        		response.put("operation_status", false);
-	        		if(n_try == 3)
-	        			response.put("info", "failed");
-	        		else
-	        			response.put("info", "wrong password");
-	        		System.out.println("wrong password");
-	        		out.println(response.toString());
-	        	}
-	        	
+	        	authSuccess = authenticate(json.getString("login"), json.getString("password"));
+	       		if(authSuccess)
+	       		{
+	       			infoMsg = "success";
+	       		} else
+	       			infoMsg = "wrong password";
 	        } catch (Exception e)
-	        {	// nie znalazlem takiego loginu
-	        	response.put("operation_status", false);
-	            response.put("info", "wrong login");
-        		out.println(response.toString());
-        		System.out.println("wrong login");
+	        {	// cannot find client with given login
+	        	authSuccess = false;
+	            infoMsg = "wrong login";
 	        }
-	        if(n_try == 3)
-            {
-	        	System.out.println("third failde attempt to log in, session will expire");
-	        	close();
-	        	return false;
-            	//response.put("info", "third failde attempt to log in, session will expire");
-            }
+   			if(n_try == 3 && authSuccess==false)
+   				infoMsg = "failed";
+       		response.put("info", infoMsg);
+       		response.put("operation_status", authSuccess);
+       		out.println(response.toString());
+    		System.out.println(infoMsg);
         }
-        return true;
+        return authSuccess;
 	}
 	
 	public void spin() throws JSONException, IOException

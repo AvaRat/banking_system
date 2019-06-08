@@ -9,8 +9,10 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 import org.json.*;
 
+import gui.BankingGui;
 
-public class TerminalClient {
+
+public class TerminalClient implements Controller{
 	private int clientID;
 	private Socket clientSocket;
 	private PrintWriter out;
@@ -20,6 +22,11 @@ public class TerminalClient {
 	
 	private Scanner terminalScanner;
 	
+	public void setGui(BankingGui gui)
+	{
+		System.out.println("gui set\nTODO");
+	}
+	
 	public TerminalClient() throws IOException
 	{
 		boolean connectionSucceded = startConnection();
@@ -28,6 +35,10 @@ public class TerminalClient {
 			throw new IOException("connection Failed, try again");
 		}
 		terminalScanner = new Scanner(System.in);
+	}
+	public void connectToServer() throws Exception
+	{
+		
 	}
 	
 	private boolean startConnection()
@@ -51,9 +62,26 @@ public class TerminalClient {
 	public void loginScreen()
 	{
 		System.out.println("Witaj w naszej aplikacji bankowej\n ");
+		System.out.println("aby zalogowac sie wcisnij 'log_in'");
+		System.out.println("Jesli nie masz jeszcze konta wcisnij 'sing_in'");
+		String choice = terminalScanner.nextLine();
+		if(choice.contentEquals("log_in"))
+		{
+			try
+			{
+				authenticate("a", "b");
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		else if(choice.contentEquals("sign_in"))
+				signIn();
+		
 	}
 	
-	public boolean authenticate() throws Exception
+	public boolean authenticate(String a, String b) throws Exception
 	{
 		System.out.println("login: ");
 		String login = terminalScanner.nextLine();
@@ -78,6 +106,32 @@ public class TerminalClient {
 				return false;		
 		
 		return true;
+		
+	}
+	
+	public void spin()
+	{
+		System.out.println("to make a transfer write 'transfer'");
+		System.out.println("to view your transaction history write 'history'");
+		String choice = terminalScanner.nextLine();
+		if(choice.contentEquals("transfer"))
+			transferCreator();
+		else if(choice.contentEquals("history"))
+			viewHistory();
+	}
+	
+	public void transferCreator()
+	{
+		
+	}
+	public void viewHistory()
+	{
+		
+		
+	}
+	
+	public void signIn()
+	{
 		
 	}
 	@Deprecated
