@@ -103,13 +103,12 @@ public class Master {
 			String login = loginField.getText().toString();
 			passwordField.setText("");
 			loginField.setText("");
-			System.out.println("login: " + login + "\npasswd: " + password);
 			try
 			{
 				if(client.authenticate(login, password) == true)
 				{
 					frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
-					frame = new ClientSession();
+					frame = new ClientWindow();
 					frame.setVisible(true);
 				} else
 				{
@@ -126,6 +125,16 @@ public class Master {
 					    JOptionPane.WARNING_MESSAGE);
 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 			}	
+		}
+	}
+	public class TransferListener implements ActionListener {
+		public TransferListener()
+		{
+			
+		}
+		public void actionPerformed(ActionEvent event)
+		{
+			
 		}
 	}
 }

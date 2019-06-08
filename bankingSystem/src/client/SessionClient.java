@@ -113,8 +113,9 @@ public class SessionClient implements Controller{
 			return e.getMessage();
 		}
 	}
- 	
-	public String receiveMsg()
+
+ 	@Deprecated
+	private String receiveMsg()
 	{
 		String response = new String();
 		try
