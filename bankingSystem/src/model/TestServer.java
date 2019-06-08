@@ -1,6 +1,6 @@
 package model;
 
-public class Test {
+public class TestServer {
 	public static void main(String[] args) throws Exception
 	{
 		DataBase dataBase = new DataBase();

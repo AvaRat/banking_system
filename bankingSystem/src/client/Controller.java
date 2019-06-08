@@ -2,12 +2,10 @@ package client;
 
 import java.io.IOException;
 
-import gui.BankingGui;
 
 public interface Controller {
 	public void connectToServer() throws Exception;
 	public void transferCreator();
-	public void setGui(BankingGui gui);
 	public void viewHistory();	
 	public void signIn();
 	public void stopConnection() throws IOException;

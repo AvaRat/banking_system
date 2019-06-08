@@ -1,14 +1,10 @@
 package gui;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import client.Controller;
-import gui.Master.AuthenticationListener;
 
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
@@ -19,6 +15,10 @@ import java.awt.Font;
 
 public class AuthenticationWindow extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1353534L;
 	private JPanel contentPane;
 	private JTextField loginField;
 	private JPasswordField passwordField;
