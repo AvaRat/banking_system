@@ -49,8 +49,7 @@ public class TerminalClient extends SessionClient implements Controller{
 				e.printStackTrace();
 			}
 		}
-		else if(choice.contentEquals("sign_in"))
-				signIn();
+
 	}
 	
 	public boolean authenticate() throws Exception

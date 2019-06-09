@@ -9,7 +9,8 @@ public interface Controller {
 	public double getBalance() throws Exception;
 	public String getTransferHistory() throws Exception;
 	public String getName() throws Exception;
-	public void signIn();
+	public void signIn(int age_, String name_, String surname_,
+			String street_, int streetNr_, String city_, String country_, String login, String password) throws Exception;
 	public void stopConnection() throws IOException;
 	/**
 	 * 

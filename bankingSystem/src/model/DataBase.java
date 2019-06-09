@@ -17,6 +17,11 @@ public class DataBase {
 		newClient(client);
 	}
 	
+	public boolean containsClient(String login)
+	{
+		return clients.containsKey(login);
+	}
+	
 	public Customer find(String login) throws Exception
 	{
 		Customer client = clients.get(login);

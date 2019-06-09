@@ -8,10 +8,21 @@ public class Customer extends Account {
 	
 	private static int nextID;
 	
+	/**customer constructor with login the same as name
+	 * 
+	 * @param person
+	 * @param passwd
+	 */
 	public Customer(Person person, String passwd)
 	{
 		personalData = person;
 		login = person.getName();
+		password = passwd;
+	}
+	public Customer(Person person, String login, String passwd)
+	{
+		personalData = person;
+		this.login = login;
 		password = passwd;
 	}
 	

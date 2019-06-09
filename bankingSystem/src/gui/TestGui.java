@@ -5,10 +5,11 @@ import client.SessionClient;
 public class TestGui {
 	public static void main(String[] args)
 	{		
-		SessionClient client = new SessionClient();
-		Master master = new Master(client);
+		SessionClient controller = new SessionClient();
+		Master master = new Master(controller);
 		if(!master.connectToServer())
 			return;
-		master.initialize();
+		else
+			master.initialize();
 	}
 }

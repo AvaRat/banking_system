@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
 
 import org.json.JSONException;
@@ -16,6 +14,7 @@ public class SessionServer extends Thread {
 	private DataBase dataBase;
 	
 	private String login = null;
+	private boolean accessGranted = false;
 	
 	private Socket clientSocket;
 	private PrintWriter out;
@@ -34,16 +33,103 @@ public class SessionServer extends Thread {
         }
         try
         {
-        	if(authenticate() == true)
-        	{
-        		getClientData();
-        		spin();
-        	}
-        }catch (IOException e)
+        	mediate();
+        }catch (JSONException e)
+        {
+        	System.out.println("error occured while parsing JSON object");
+        }
+        catch (IOException e)
         {
         	System.out.println("error occured during authentication");
+        }catch (Exception e)
+        {
+        	System.out.println("session should close");
         }
 
+	}
+	private void mediate() throws JSONException, IOException, Exception
+	{
+		while(true)
+		{
+			try 
+			{
+				 JSONObject msg = new JSONObject(in.readLine());
+				 if(msg.has("operation_type") == false)
+					 System.out.println("TODO\nno operation_type field in received JSON object");
+				 switch (msg.getString("operation_type"))
+				 {
+				 case "authentication": 
+					 {
+						 if(authenticate(msg) == true)
+						 {
+							 accessGranted = true;
+							 getClientData();
+						 }
+					 }break;
+				 case "log_out": 
+					 {
+						 logOut();
+					 }break;
+				 case "transfer":
+					 {
+						 // TODO
+						 System.out.println("request to transfer money");
+					 }break;
+				 case "password_change":
+					 {
+						 System.out.println("request to change a password");
+					 }break;
+				 case "get_history":
+					 {
+						 sendHistory();
+					 }break;
+				 case "get_balance":
+					 {
+						 sendBalance();
+					 }break;
+				 case "get_name":
+					 {
+						 sendName();
+					 }break;
+				 case "sign_in":
+				 {
+					 signIn(msg);
+				 }break;
+				 default : 
+					 throw new JSONException("json error");
+				 } 
+			}catch (JSONException e)
+			{
+				out.println(new JSONObject().put("info", e.getMessage()));
+			}
+			
+		}
+	}
+	
+	private void sendName() throws Exception
+	{
+		if(accessGranted == false)
+			throw new Exception("not authenticated");
+		else
+			out.println(new JSONObject().put("value", clientData.getName()));
+	}
+	private void sendBalance() throws Exception
+	{
+		if(accessGranted == false)
+			throw new Exception("not authenticated");
+		else
+			out.println(new JSONObject().put("value", clientData.getBalance()));
+	}
+	private void sendHistory() throws Exception
+	{
+		if(accessGranted == false)
+			throw new Exception("not authenticated");
+		else
+			out.println(new JSONObject().put("value", clientData.getHistory()));
+	}
+	private void logOut()
+	{
+		System.out.println("TODO\nlogging out");
 	}
 	
 	public SessionServer(Socket s, DataBase database)
@@ -62,18 +148,39 @@ public class SessionServer extends Thread {
 			e.printStackTrace();
 		}
 	}
- 	private boolean authenticate() throws IOException 
+
+	private void signIn(JSONObject msg) throws JSONException
+	{
+		String infoMsg = "";
+		boolean success = false;
+		System.out.println("attempt to create new user ...");
+		if(! dataBase.containsClient(msg.getString("login")))
+		{
+			Person newCustomer = new Person(msg.getInt("age"), msg.getString("name"),
+					msg.getString("surname"), msg.getString("street_name"), 
+					msg.getInt("street_nr"), msg.getString("city"), msg.getString("country"));
+			dataBase.newClient(new Customer(newCustomer, msg.getString("login"), msg.getString("password")));
+		infoMsg = "success";
+		success = true;
+		}else
+		{
+			infoMsg = "user with given login already exist";
+		}
+		JSONObject response = new JSONObject();
+       	response.put("info", infoMsg);
+       	response.put("operation_status", success);
+       	out.println(response.toString());
+    	System.out.println(infoMsg);
+	}
+	
+	private boolean authenticate(JSONObject json) throws IOException 
 	{
 			boolean authSuccess = false;    
 	        int n_try = 1;
 	        
 	        for(; n_try<=3 && authSuccess==false; n_try++)
-	        {
-	        	System.out.print("ok. waiting for a messages...\t");
-		        while(!in.ready()) {}
-		        
-		        JSONObject json = new JSONObject(in.readLine());
-		        System.out.println("msg read");
+	        {	        
+		        System.out.println("authenticating ... ");
 		        login = json.getString("login");
 		        String infoMsg = "";
 		        try
@@ -99,33 +206,7 @@ public class SessionServer extends Thread {
 	        }
 	        return authSuccess;
 		}
-		
-	public void spin() throws JSONException, IOException
-		{
-			while(true)
-			{
-				 JSONObject msg = new JSONObject(in.readLine());
-				 assert msg.has("operation_type") == true;
-				 switch (msg.getString("operation_type"))
-				 {
-				 case "log_out": System.out.println("request to log out");
-				 	break;
-				 case "transfer": System.out.println("request to transfer money");
-				 	break;
-				 case "password_change": System.out.println("request to change a password");
-				 	break;
-				 case "get_history": out.println(new JSONObject().put("value", clientData.getHistory()));
-				 	break;
-				 case "get_balance": out.println(new JSONObject().put("value", clientData.getBalance()));
-				 	break;
-				 case "get_name": out.println(new JSONObject().put("value", clientData.getName()));
-				 	break;
-				 default : 
-					 out.println(new JSONObject().put("value", "unknown operation type"));
-				 } 
-			}
-		}
-		
+				
 	private boolean checkCredentials(String login, String password) throws Exception
 		{
 			Customer client = dataBase.find(login);
@@ -148,9 +229,4 @@ public class SessionServer extends Thread {
 	    	return clientSocket.getRemoteSocketAddress().toString();
 	    }
 
-	public String getClient()
-	{
-		return clientData.getName();
-		
-	}
 }

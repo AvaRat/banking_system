@@ -109,6 +109,21 @@ public class Master {
 	{
 		return controller.getTransferHistory();
 	}
+	/**
+	 * function to open a new window for gathering signIn information
+	 */
+	public void signIn()
+	{
+		frame.setVisible(false);
+		new SignInWindow(this); //
+	}
+	
+	private void signIn(int age_, String name_, String surname_,
+			String street_, int streetNr_, String city_, String country_, String login, String password) throws Exception
+	{
+		controller.signIn(age_, name_, surname_,
+			street_, streetNr_, city_, country_, login, password);
+	}
 
 	public  class AuthenticationListener implements ActionListener {
 		private JPasswordField passwordField;
@@ -159,14 +174,13 @@ public class Master {
 		public void actionPerformed(ActionEvent event)
 		{
 		}
-	}
-	
+	}	
 	public class RefreshListener implements ActionListener {
 		JLabel customerName;
 		JLabel balanceLabel;
-		JTextPane transferHistory;
+		JTextField transferHistory;
 		
-		public RefreshListener(JLabel name, JTextPane history, JLabel balance)
+		public RefreshListener(JLabel name, JTextField history, JLabel balance)
 		{
 			customerName = name;
 			balanceLabel = balance;
@@ -196,13 +210,65 @@ public class Master {
 			
 			String history = "????";
 			try {
-				name = getTransferHistory();
+				history = getTransferHistory();
 			}catch (Exception e)
 			{
 				e.printStackTrace();
 				showErrorInDialogWindow(e.getMessage());
 			}
 			transferHistory.setText(history);
+			
 		}
 	}
+	public class SignInListener implements ActionListener{
+		JTextField nameField;
+		JTextField surNameField;
+		JTextField ageField;
+		JTextField streetNameField;
+		JTextField streetNrField;
+		JTextField cityField;
+		JTextField countryField;
+		JTextField loginField;
+		JPasswordField passwordField;
+		JFrame signInFrame;
+		
+		public SignInListener(JFrame frame, JTextField nameField, JTextField surNameField,
+					JTextField ageField,JTextField streetNameField,JTextField streetNrField,
+					JTextField cityField, JTextField countryField, JTextField loginField,
+					JPasswordField passwordField)
+		{
+			this.signInFrame = frame;
+			this.nameField = nameField;
+			this.surNameField =surNameField;
+			this.ageField = ageField;
+			this.streetNameField = streetNameField;
+			this.streetNrField = streetNrField;
+			this.cityField = cityField;
+			this.countryField = countryField;
+			this.loginField = loginField;
+			this.passwordField = passwordField;
+		}
+		
+		public void actionPerformed(ActionEvent event)
+		{
+			try {
+				signIn(Integer.parseInt(ageField.getText()), nameField.getText(), surNameField.getText(),
+						streetNameField.getText(), Integer.parseInt(streetNrField.getText()), cityField.getText(),
+						countryField.getText(), loginField.getText(), String.valueOf(passwordField.getPassword()));
+			}catch (NumberFormatException e)
+			{
+				showErrorInDialogWindow("Not filled in properly");
+			}
+			catch (Exception e)
+			{
+				showErrorInDialogWindow(e.getMessage());
+				
+				return;
+			}
+			frame.setVisible(true);
+			signInFrame.dispatchEvent(new WindowEvent(signInFrame, WindowEvent.WINDOW_CLOSING));
+		}
+		
+	}
+	
 }

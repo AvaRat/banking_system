@@ -142,9 +142,29 @@ public class SessionClient implements Controller{
 			return e.getMessage();
 		}
 	}
- 	public void signIn()
- 	{
- 		
- 	}
+	@Override
+	public void signIn(int age, String name, String surname, String street, int streetNr, String city,
+			String country, String login, String password) throws Exception 
+	{
+		JSONObject msg = new JSONObject();
+		msg.put("operation_type", "sign_in");
+		msg.put("age", age);
+		msg.put("name", name);
+		msg.put("surname", surname);
+		msg.put("street_name", street);
+		msg.put("street_nr", streetNr);
+		msg.put("city", city);
+		msg.put("country", country);
+		msg.put("login", login);
+		msg.put("password", password);
+		
+		String response = sendAndReceive(msg.toString());
+		JSONObject jsonResponse = new JSONObject(response);
+		if(jsonResponse.has("operation_status") == false)
+			throw new Exception(jsonResponse.getString("info"));
+		System.out.println(jsonResponse.getString("info"));
+		if(jsonResponse.getBoolean("operation_status") == false)
+			throw new Exception(jsonResponse.getString("info"));
+	}
 
 }

@@ -1,29 +1,23 @@
 package gui;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
-import java.awt.FlowLayout;
+import java.awt.Component;
 import java.awt.Font;
+import java.awt.GridLayout;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.BoxLayout;
-import java.awt.Component;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.GridLayout;
-import javax.swing.JTextPane;
 
 public class SessionWindow extends JFrame {
 
 	private static final long serialVersionUID = 12343243L;
 	private JPanel contentPane;
+	private JTextField transactionHistory;
 
 
 	/**
@@ -90,29 +84,23 @@ public class SessionWindow extends JFrame {
 		btnNewTransfer.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		btnNewTransfer.setBounds(655, 469, 201, 33);
 		contentPane.add(btnNewTransfer);
-		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(40, 44, 381, 597);
-		
-		contentPane.add(scrollPane);
-		
-		JPanel historia = new JPanel();
-		scrollPane.setViewportView(historia);
-		historia.setLayout(new BorderLayout(0, 0));
-		
-		JTextPane historyPane = new JTextPane();
-		historia.add(historyPane, BorderLayout.CENTER);
+
+		transactionHistory = new JTextField();
+		transactionHistory.setBounds(40, 84, 330, 494);
+		contentPane.add(transactionHistory);
+		transactionHistory.setColumns(10);
+		transactionHistory.setEditable(false);
 		
 		JLabel lblHistoriaOperacji = new JLabel("transfer history");
 		lblHistoriaOperacji.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		lblHistoriaOperacji.setBounds(147, 11, 174, 33);
+		lblHistoriaOperacji.setBounds(119, 40, 174, 33);
 		contentPane.add(lblHistoriaOperacji);
 		
 		JButton btnRefresh = new JButton("Refresh");
 		btnRefresh.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		btnRefresh.setBounds(706, 304, 121, 48);
 		contentPane.add(btnRefresh);
-		Master.RefreshListener refreshListener = master.new RefreshListener(nameButton, historyPane, balance);
+		Master.RefreshListener refreshListener = master.new RefreshListener(nameButton, transactionHistory, balance);
 		btnRefresh.addActionListener(refreshListener);
 	}
 }

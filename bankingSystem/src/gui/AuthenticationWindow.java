@@ -4,7 +4,7 @@ package gui;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
+import java.awt.event.*;
 
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
@@ -64,9 +64,15 @@ public class AuthenticationWindow extends JFrame {
 		
 		contentPane.add(btnLogIn);
 		
-		JButton btnSingIn = new JButton("Sing In");
-		btnSingIn.setBounds(154, 227, 89, 23);
-		contentPane.add(btnSingIn);
+		JButton btnSignIn = new JButton("Sing In");
+		btnSignIn.setBounds(154, 227, 89, 23);
+		contentPane.add(btnSignIn);
+		
+	    btnSignIn.addActionListener(new ActionListener(){  
+	        public void actionPerformed(ActionEvent e){  
+	                master.signIn(); 
+	        }  
+	        }); 
 		
 		JLabel lblDontHaveAn = new JLabel("Don't have an acount?");
 		lblDontHaveAn.setBounds(135, 204, 132, 14);
