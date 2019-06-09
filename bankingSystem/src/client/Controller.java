@@ -6,7 +6,9 @@ import java.io.IOException;
 public interface Controller {
 	public void connectToServer() throws Exception;
 	public void transferCreator();
-	public void viewHistory();	
+	public double getBalance() throws Exception;
+	public String getTransferHistory() throws Exception;
+	public String getName() throws Exception;
 	public void signIn();
 	public void stopConnection() throws IOException;
 	/**
@@ -17,4 +19,6 @@ public interface Controller {
 	 * @throws Exception when login doesn't match any login in our dataBase
 	 */
 	public boolean authenticate(String login, String password) throws Exception;
+	
+	
 }

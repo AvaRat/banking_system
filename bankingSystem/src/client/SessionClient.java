@@ -6,7 +6,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.regex.Pattern;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 
@@ -94,18 +96,39 @@ public class SessionClient implements Controller{
 		
 		
 	}
-	public double getBalance()
+	public double getBalance() throws Exception
 	{
-		return 0.5f;
+		JSONObject msg = new JSONObject();
+		msg.put("operation_type", "get_balance");
+		try {
+			JSONObject response = new JSONObject(sendAndReceive(msg.toString()));
+			return response.getDouble("value");
+		}catch (JSONException e)
+		{	// couldn't read from socket input bufer
+			throw e;
+		}
 	}
-	public void signIn()
+	public String getName()throws Exception
 	{
-		
+		JSONObject msg = new JSONObject();
+		msg.put("operation_type", "get_name");
+		Pattern compiledPattern = Pattern.compile("unknown");
+		JSONObject response = new JSONObject(sendAndReceive(msg.toString()));
+		if(compiledPattern.matcher(response.getString("value")).find())
+			throw new Exception("error while communicating with the server");
+		else
+			return response.getString("value");
 	}
-	@Deprecated
-	public void authorize() throws Exception
+	public String getTransferHistory() throws Exception
 	{
-		
+		JSONObject msg = new JSONObject();
+		msg.put("operation_type", "get_history");
+		Pattern compiledPattern = Pattern.compile("unknown");
+		JSONObject response = new JSONObject(sendAndReceive(msg.toString()));
+		if(compiledPattern.matcher(response.getString("value")).find())
+			throw new Exception("error while communicating with the server");
+		else
+			return response.getString("value");
 	}
  	private String sendAndReceive(String msg)
 	{
@@ -119,18 +142,9 @@ public class SessionClient implements Controller{
 			return e.getMessage();
 		}
 	}
+ 	public void signIn()
+ 	{
+ 		
+ 	}
 
- 	@Deprecated
-	private String receiveMsg()
-	{
-		String response = new String();
-		try
-		{
-			response = in.readLine();
-		}catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		return response;
-	}
 }

@@ -43,10 +43,10 @@ public class Customer extends Account {
 	{
 		return login;
 	}
-	public String getAccountHistory()
+	public String getHistory()
 	{
 		StringBuilder str = new StringBuilder("\t**account HISTORY**\n");
-		for(Transfer t:getHistory())
+		for(Transfer t:getAccountHistory())
 		{
 			if(t.getSender().getID() == ID)
 			{

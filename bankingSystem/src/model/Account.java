@@ -22,7 +22,7 @@ public class Account {
 	{
 		return number;
 	}
-	public ArrayList<Transfer> getHistory()
+	public ArrayList<Transfer> getAccountHistory()
 	{
 		return transferHistory;
 	}

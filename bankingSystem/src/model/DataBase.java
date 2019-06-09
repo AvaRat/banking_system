@@ -41,7 +41,7 @@ public class DataBase {
 	public String getHistory(String login) throws Exception
 	{
 		Customer client = find(login);
-		return client.getAccountHistory();
+		return client.getHistory();
 	}
 	public void fillWithSampleJSON(String path)
 	{

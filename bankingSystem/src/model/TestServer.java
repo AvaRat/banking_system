@@ -5,11 +5,10 @@ public class TestServer {
 	{
 		DataBase dataBase = new DataBase();
 		Server server = new Server(dataBase);
+		ServerManager manager = new ServerManager(server);
+		manager.start();
 		dataBase.fillWithSampleJSON("MOCK_DATA.json");
-		if(!server.start(6666))
-			return;
-		server.spin();
-		server.close();
+		server.spin(6666);
 	}
 
 }
