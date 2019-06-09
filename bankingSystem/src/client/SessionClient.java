@@ -82,6 +82,9 @@ public class SessionClient implements Controller{
 		out.close();
 		clientSocket.close();
 	}
+	/**
+	 * @TODO
+	 */
 	public void transferCreator()
 	{
 		
@@ -91,7 +94,10 @@ public class SessionClient implements Controller{
 		
 		
 	}
-	
+	public double getBalance()
+	{
+		return 0.5f;
+	}
 	public void signIn()
 	{
 		

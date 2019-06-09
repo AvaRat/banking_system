@@ -5,8 +5,8 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class Mock {
-	public Client clientA;
-	public Client clientB;
+	public Customer clientA;
+	public Customer clientB;
 	public ArrayList<Person> personList;
 	
 	public static void main(String[] args)
@@ -34,14 +34,14 @@ public class Mock {
 	{
 		for(Person p : personList)
 		{
-			dataBase.newClient(new Client((p), "defaultPassword"));
+			dataBase.newClient(new Customer((p), "defaultPassword"));
 		}
 	}
 	
 	public void runTests() throws Exception
 	{
-		clientA = new Client(personList.get(19), "admin");
-		clientB = new Client(personList.get(69), "admin");
+		clientA = new Customer(personList.get(19), "admin");
+		clientB = new Customer(personList.get(69), "admin");
 	}
 
 }

@@ -3,28 +3,28 @@ package model;
 import java.util.*;
 
 public class DataBase {
-	private Map<String, Client> clients = new HashMap<String, Client>();
+	private Map<String, Customer> clients = new HashMap<String, Customer>();
 	private Map<Integer, String> accountToLogin =  new HashMap<Integer, String>();
 	
-	public void newClient(Client client)
+	public void newClient(Customer client)
 	{
 		clients.put(client.getLogin(), client);
 		accountToLogin.put(client.getAccountNumber(), client.getLogin());
 	}
-	public void newClient(Client client, String login)
+	public void newClient(Customer client, String login)
 	{
 		client.setLogin(login);
 		newClient(client);
 	}
 	
-	public Client find(String login) throws Exception
+	public Customer find(String login) throws Exception
 	{
-		Client client = clients.get(login);
+		Customer client = clients.get(login);
 		if(client == null)
 			throw new Exception("no client with given login");
 		return client;
 	}
-	public Client find(int accountNumber) throws Exception
+	public Customer find(int accountNumber) throws Exception
 	{
 		String login = accountToLogin.get(accountNumber);
 		if(login == null)
@@ -32,15 +32,15 @@ public class DataBase {
 		return find(login);
 	}
 	
-	public void transfer(Client sender, int accountNumber, double value) throws Exception
+	public void transfer(Customer sender, int accountNumber, double value) throws Exception
 	{
-			Client receiver = find(accountNumber);
+			Customer receiver = find(accountNumber);
 			sender.makeTransfer(receiver, value);
 	}
 	
 	public String getHistory(String login) throws Exception
 	{
-		Client client = find(login);
+		Customer client = find(login);
 		return client.getAccountHistory();
 	}
 	public void fillWithSampleJSON(String path)
@@ -51,7 +51,7 @@ public class DataBase {
 		{
 			for(Person p : reader.readJSON())
 			{
-				newClient(new Client((p), "admin1"));
+				newClient(new Customer((p), "admin1"));
 				count++;
 			}
 			

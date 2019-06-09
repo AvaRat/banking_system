@@ -1,6 +1,6 @@
 package model;
 
-public class Client extends Account {
+public class Customer extends Account {
 	private Person personalData;
 	private int ID = nextID++;
 	private String login;
@@ -8,14 +8,14 @@ public class Client extends Account {
 	
 	private static int nextID;
 	
-	public Client(Person person, String passwd)
+	public Customer(Person person, String passwd)
 	{
 		personalData = person;
 		login = person.getName();
 		password = passwd;
 	}
 	
-	public void makeTransfer(Client receiver, double value)
+	public void makeTransfer(Customer receiver, double value)
 	{
 		Transfer transfer = new Transfer(this, receiver, value);
 		receiver.transferIn(transfer);

@@ -1,34 +1,53 @@
- package model;
+package model;
 
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.*;
-
-public class Server {
+public class SessionServer extends Thread {
+	private Customer clientdData;
 	private DataBase dataBase;
-	private ServerSocket serverSocket;
+	
 	private Socket clientSocket;
 	private PrintWriter out;
 	private BufferedReader in;
 	
-	public Server(DataBase database)
-	{
-		dataBase = database;
+	@Override
+	public void run() {
+        System.out.println("new session thread connected to " + clientSocket.toString());
+        try
+        {
+        	out = new PrintWriter(clientSocket.getOutputStream(), true);
+        	in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        }catch (IOException e)
+        {
+        	
+        }
+        try
+        {
+        	authenticationProcess();
+        }catch (IOException e)
+        {
+        	
+        }
+
 	}
 	
-	public boolean start(int port) throws IOException
+	public SessionServer(Socket s, DataBase database)
 	{
-        serverSocket = new ServerSocket(port);
-        System.out.println(serverSocket.toString());
-        clientSocket = serverSocket.accept();
-        System.out.println("connected to " + clientSocket.toString());
-        out = new PrintWriter(clientSocket.getOutputStream(), true);
-        in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        
-        boolean authSuccess = false;    
+		dataBase = database;
+		clientSocket = s;
+	}
+
+private boolean authenticationProcess() throws IOException {
+		boolean authSuccess = false;    
         int n_try = 1;
         
         for(; n_try<=3 && authSuccess==false; n_try++)
@@ -43,7 +62,7 @@ public class Server {
 	        String infoMsg = "";
 	        try
 	        {
-	        	authSuccess = authenticate(json.getString("login"), json.getString("password"));
+	        	authSuccess = checkCredentials(json.getString("login"), json.getString("password"));
 	       		if(authSuccess)
 	       		{
 	       			infoMsg = "success";
@@ -88,7 +107,7 @@ public class Server {
 		}
 	}
 	
-	public boolean authenticate(String login, String password) throws Exception
+	private boolean checkCredentials(String login, String password) throws Exception
 	{
 		Customer client = dataBase.find(login);
 		return client.checkPassword(password);
@@ -99,16 +118,15 @@ public class Server {
         in.close();
         out.close();
         clientSocket.close();
-        serverSocket.close();
     }
     public boolean isBound()
     {
-    	return serverSocket.isBound();
+    	return clientSocket.isBound();
     }
     
     public InetAddress getIP()
     {
-    	return serverSocket.getInetAddress();
+    	return clientSocket.getInetAddress();
     }
-	
+
 }

@@ -3,12 +3,12 @@ package model;
 import java.util.Date;
 
 public class Transfer {
-	private Client sender;
-	private Client receiver;
+	private Customer sender;
+	private Customer receiver;
 	private double value;
 	private Date date;
 	
-	public Transfer(Client sen, Client rec, double val)
+	public Transfer(Customer sen, Customer rec, double val)
 	{
 		sender = sen;
 		receiver = rec;
@@ -16,11 +16,11 @@ public class Transfer {
 		date = new Date();
 	}
 	
-	public Client getSender()
+	public Customer getSender()
 	{
 		return sender;
 	}
-	public Client getReceiver()
+	public Customer getReceiver()
 	{
 		return receiver;
 	}
