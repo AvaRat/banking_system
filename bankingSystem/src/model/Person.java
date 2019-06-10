@@ -1,5 +1,6 @@
 package model;
 
+import org.json.JSONObject;
 
 public class Person {
 	private int age;
@@ -13,6 +14,24 @@ public class Person {
 		name = name_;
 		surname = surname_;
 		permanentAddress = new Address(street_, streetNr_, city_, country_);
+	}
+	
+	public Person(JSONObject person)
+	{
+		age = person.getInt("age");
+		name = person.getString("name");
+		surname = person.getString("surname");
+		permanentAddress = new Address(person.getJSONObject("permanentAddress"));
+	}
+	
+	public JSONObject toJSON()
+	{
+		JSONObject person = new JSONObject();
+		person.put("name", name);
+		person.put("surname", surname);
+		person.put("age", age);
+		person.put("permanentAddress", permanentAddress.toJSON());
+		return person;
 	}
 	
 	public Person(Person other)
@@ -38,10 +57,30 @@ public class Person {
 	{
 		return name;
 	}
-	
+	public String getSurname()
+	{
+		return surname;
+	}
 	public String getAddress()
 	{
 		return permanentAddress.toString();
+	}
+	public String getStreet()
+	{
+		return permanentAddress.getStreet();
+	}
+	
+	public int getStreetNr()
+	{
+		return permanentAddress.getStreetNr();
+	}
+	public String getCity()
+	{
+		return permanentAddress.getCity();
+	}
+	public String getCountry()
+	{
+		return permanentAddress.getCountry();
 	}
 	public String toString()
 	{
@@ -61,6 +100,38 @@ public class Person {
 			city = city_;
 			streetNr = streetNr_;
 			country = country_;
+		}
+		public Address(JSONObject ob)
+		{
+			street = ob.getString("street");
+			city = ob.getString("city");
+			streetNr = ob.getInt("streetNr");
+			country = ob.getString("country");
+		}
+		public JSONObject toJSON()
+		{
+			JSONObject a = new JSONObject();
+			a.put("street", street);
+			a.put("streetNr", streetNr);
+			a.put("city", city);
+			a.put("country", country);
+			return a;
+		}
+		public String getStreet() 
+		{
+			return street;
+		}
+		public String getCity()
+		{
+			return city;
+		}
+		public int getStreetNr()
+		{
+			return streetNr;
+		}
+		public String getCountry()
+		{
+			return country;
 		}
 		
 		private Address(Address addr)

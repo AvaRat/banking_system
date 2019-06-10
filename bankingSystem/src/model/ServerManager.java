@@ -62,6 +62,16 @@ public class ServerManager extends Thread {
 		
 		JButton btnQuit = new JButton("Quit");
 		panel.add(btnQuit, BorderLayout.WEST);
+		
+		JButton btnSaveDatabase = new JButton("Save DataBase");
+		panel.add(btnSaveDatabase, BorderLayout.EAST);
+		
+		btnSaveDatabase.addActionListener(new ActionListener(){  
+		    public void actionPerformed(ActionEvent e){  
+		    	server.getDataBase().saveToFile();
+		    }  
+		    });
+		
 		btnQuit.addActionListener(new ActionListener(){  
 		    public void actionPerformed(ActionEvent e){  
 		    	server.listening = false;

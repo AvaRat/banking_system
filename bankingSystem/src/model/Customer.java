@@ -1,5 +1,9 @@
 package model;
 
+import org.json.JSONObject;
+
+import com.google.gson.Gson;
+
 public class Customer extends Account {
 	private Person personalData;
 	private int ID = nextID++;
@@ -25,7 +29,31 @@ public class Customer extends Account {
 		this.login = login;
 		password = passwd;
 	}
-	
+	public Customer(JSONObject ob)
+	{
+		super(ob.getInt("number"), ob.getDouble("balance"), ob.getJSONArray("transferHistory"));
+		personalData = new Person(ob.getJSONObject("personalData"));
+		login = ob.getString("login");
+		password = ob.getString("password");
+		ID = ob.getInt("ID");
+	}
+	public Customer(Person person, String login, String passwd, int id)
+	{
+		personalData = person;
+		this.login = login;
+		password = passwd;
+		ID = id;
+	}
+	public JSONObject toJSON()
+	{
+		JSONObject c = new JSONObject();
+		c.put("login", login);
+		c.put("password", password);
+		c.put("ID", ID);
+		c.put("personalData", personalData.toJSON());
+		return c;
+	}
+
 	public void makeTransfer(Customer receiver, double value)
 	{
 		Transfer transfer = new Transfer(this, receiver, value);
@@ -54,18 +82,24 @@ public class Customer extends Account {
 	{
 		return login;
 	}
-	public String getHistory()
+	public String getHistoryJSON()
 	{
-		StringBuilder str = new StringBuilder("\t**account HISTORY**\n");
+		Gson gson = new Gson();
+		return gson.toJson(getAccountHistory());
+	}
+	public String getHistoryByAcccountNr()
+	{
+		
+		StringBuilder str = new StringBuilder();
 		for(Transfer t:getAccountHistory())
 		{
-			if(t.getSender().getID() == ID)
+			if(t.getSenderNr() == getNr())
 			{
-				str.append("sent ").append(t.getValue()+"  to ").append(t.getReceiver().getName() + "  at ").append(t.getDate()+"\n\n");
+				str.append("sent ").append(t.getValue()+"  to ").append(t.getReceiverNr() + "  at ").append(t.getDate()+"\n");
 			}
 			else
 			{
-				str.append("received ").append(t.getValue()+"  from ").append(t.getSender().getName() + "  at ").append(t.getDate()+"\n\n");
+				str.append("received ").append(t.getValue()+"  from ").append(t.getSenderNr() + "  at ").append(t.getDate()+"\n");
 			}
 		}
 		return str.toString();
@@ -78,6 +112,10 @@ public class Customer extends Account {
 	{
 		return personalData.getName();
 	}
+	public String getSurname()
+	{
+		return personalData.getSurname();
+	}
 
 	public int getAccountNumber()
 	{
@@ -85,8 +123,9 @@ public class Customer extends Account {
 	}
 	public void printInfo()
 	{
-		StringBuilder str = new StringBuilder("ID\tlogin\tpassword\tname\tsurname\tstreet nr city country\n");
+		StringBuilder str = new StringBuilder("ID\tlogin\tpassword name  surname\tstreet nr city\t  country\n");
 		str.append(ID+ "\t").append(login +"\t").append(password +"\t").append(personalData.toString()).append("\n");
-		System.out.println(str.append(getAccountHistory()));
+		str.append("balance " + getBalance() + "  accountNr: " + getNr()+ "\n");
+		System.out.println(str.append(getHistoryByAcccountNr()));
 	}
 }

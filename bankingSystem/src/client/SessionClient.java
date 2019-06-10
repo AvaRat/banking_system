@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.regex.Pattern;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -87,14 +88,28 @@ public class SessionClient implements Controller{
 	/**
 	 * @TODO
 	 */
-	public void transferCreator()
+	public boolean makeTransfer(int accountNr, double value) throws Exception
 	{
-		
-	}
-	public void viewHistory()
-	{
-		
-		
+		JSONObject msg = new JSONObject();
+		msg.put("operation_type", "make_transfer");
+		msg.put("account_nr", accountNr);
+		msg.put("value", value);
+		JSONObject response = null;
+		try {
+			 response = new JSONObject(sendAndReceive(msg.toString()));
+			 if(response.has("info") && response.getBoolean("operation_status")==false)
+				 throw new Exception(response.getString("info"));
+			 return response.getBoolean("operation_status");
+		}catch (Exception e)
+		{	// couldn't read from socket input bufer
+			if(response != null)
+			{
+				if(response.has("info"))
+					throw new Exception(msg.getString("info"));
+			}else
+				throw e;
+		}
+		return false;
 	}
 	public double getBalance() throws Exception
 	{
@@ -105,7 +120,10 @@ public class SessionClient implements Controller{
 			return response.getDouble("value");
 		}catch (JSONException e)
 		{	// couldn't read from socket input bufer
-			throw e;
+			if(msg.has("info"))
+				throw new Exception(msg.getString("info"));
+			else
+				throw e;
 		}
 	}
 	public String getName()throws Exception
@@ -119,6 +137,23 @@ public class SessionClient implements Controller{
 		else
 			return response.getString("value");
 	}
+
+	public int getAccountNr() throws Exception
+	{
+		JSONObject msg = new JSONObject();
+		msg.put("operation_type", "get_account_nr");
+		try {
+			JSONObject response = new JSONObject(sendAndReceive(msg.toString()));
+			return response.getInt("value");
+		}catch (JSONException e)
+		{	// couldn't read from socket input bufer
+			if(msg.has("info"))
+				throw new Exception(msg.getString("info"));
+			else
+				throw e;
+		}
+	}
+	
 	public String getTransferHistory() throws Exception
 	{
 		JSONObject msg = new JSONObject();
@@ -130,6 +165,18 @@ public class SessionClient implements Controller{
 		else
 			return response.getString("value");
 	}
+
+
+	public JSONArray getTransferJSONHistory() throws Exception
+	{
+		JSONObject msg = new JSONObject();
+		msg.put("operation_type", "get_history");
+		JSONObject response = new JSONObject(sendAndReceive(msg.toString()));
+		if(!(response.get("value") instanceof JSONArray))
+			throw new Exception("JSON value is not an array");
+		return response.getJSONArray("value");
+	}
+	
  	private String sendAndReceive(String msg)
 	{
 		this.out.println(msg);
@@ -144,7 +191,7 @@ public class SessionClient implements Controller{
 	}
 	@Override
 	public void signIn(int age, String name, String surname, String street, int streetNr, String city,
-			String country, String login, String password) throws Exception 
+			String country, String login, String password) throws JSONException, IOException, Exception 
 	{
 		JSONObject msg = new JSONObject();
 		msg.put("operation_type", "sign_in");
@@ -164,7 +211,7 @@ public class SessionClient implements Controller{
 			throw new Exception(jsonResponse.getString("info"));
 		System.out.println(jsonResponse.getString("info"));
 		if(jsonResponse.getBoolean("operation_status") == false)
-			throw new Exception(jsonResponse.getString("info"));
+			throw new IOException(jsonResponse.getString("info"));
 	}
 
 }

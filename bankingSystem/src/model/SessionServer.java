@@ -15,6 +15,7 @@ public class SessionServer extends Thread {
 	
 	private String login = null;
 	private boolean accessGranted = false;
+	private int authCounter = 0;
 	
 	private Socket clientSocket;
 	private PrintWriter out;
@@ -70,8 +71,9 @@ public class SessionServer extends Thread {
 					 {
 						 logOut();
 					 }break;
-				 case "transfer":
+				 case "make_transfer":
 					 {
+						 makeTransfer(msg);
 						 // TODO
 						 System.out.println("request to transfer money");
 					 }break;
@@ -81,7 +83,11 @@ public class SessionServer extends Thread {
 					 }break;
 				 case "get_history":
 					 {
-						 sendHistory();
+						 sendJSONHistory();
+					 }break;
+				 case "get_account_nr":
+					 {
+						 sendAccountNr();
 					 }break;
 				 case "get_balance":
 					 {
@@ -120,12 +126,48 @@ public class SessionServer extends Thread {
 		else
 			out.println(new JSONObject().put("value", clientData.getBalance()));
 	}
+	private void makeTransfer(JSONObject msg) throws Exception
+	{
+		if(accessGranted == false)
+			throw new Exception("not authenticated");
+		else
+		{
+			Customer receiver = dataBase.find(msg.getInt("account_nr"));
+			if(receiver == null)
+			{
+				JSONObject ob = new JSONObject();
+				ob.put("info", "no account with given number");
+				ob.put("operation_status", false);
+				out.println(ob);
+			}else
+			{
+				clientData.makeTransfer(receiver, msg.getDouble("value"));
+				out.println(new JSONObject().put("operation_status", true));
+			}
+			
+		}
+	}
+	private void sendAccountNr() throws Exception
+	{
+		if(accessGranted == false)
+			throw new Exception("not authenticated");
+		else
+			out.println(new JSONObject().put("value", clientData.getAccountNumber()));
+	}
+	@SuppressWarnings("unused")
+	private void sendJSONHistory() throws Exception
+	{
+		if(accessGranted == false)
+			throw new Exception("not authenticated");
+		else
+			out.println(new JSONObject().put("value", clientData.getHistoryJSON()));
+	}
 	private void sendHistory() throws Exception
 	{
 		if(accessGranted == false)
 			throw new Exception("not authenticated");
 		else
-			out.println(new JSONObject().put("value", clientData.getHistory()));
+			out.println(new JSONObject().put("value", clientData.getHistoryByAcccountNr()));
 	}
 	private void logOut()
 	{
@@ -160,8 +202,8 @@ public class SessionServer extends Thread {
 					msg.getString("surname"), msg.getString("street_name"), 
 					msg.getInt("street_nr"), msg.getString("city"), msg.getString("country"));
 			dataBase.newClient(new Customer(newCustomer, msg.getString("login"), msg.getString("password")));
-		infoMsg = "success";
-		success = true;
+			infoMsg = "success";
+			success = true;
 		}else
 		{
 			infoMsg = "user with given login already exist";
@@ -170,16 +212,12 @@ public class SessionServer extends Thread {
        	response.put("info", infoMsg);
        	response.put("operation_status", success);
        	out.println(response.toString());
-    	System.out.println(infoMsg);
+    	System.out.println("sign_in infoMsg: " + infoMsg);
 	}
 	
 	private boolean authenticate(JSONObject json) throws IOException 
 	{
-			boolean authSuccess = false;    
-	        int n_try = 1;
-	        
-	        for(; n_try<=3 && authSuccess==false; n_try++)
-	        {	        
+			boolean authSuccess = false;          
 		        System.out.println("authenticating ... ");
 		        login = json.getString("login");
 		        String infoMsg = "";
@@ -196,14 +234,15 @@ public class SessionServer extends Thread {
 		        	authSuccess = false;
 		            infoMsg = "wrong login";
 		        }
-	   			if(n_try == 3 && authSuccess==false)
+	   			if(authCounter == 3 && authSuccess==false)
 	   				infoMsg = "failed";
+	   			
 	   			JSONObject response = new JSONObject();
 	       		response.put("info", infoMsg);
 	       		response.put("operation_status", authSuccess);
 	       		out.println(response.toString());
-	    		System.out.println(infoMsg);
-	        }
+	    		System.out.println("server infoMsg: " + infoMsg + "\nauthStatus: " + authSuccess);
+	    		authCounter++;
 	        return authSuccess;
 		}
 				

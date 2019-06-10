@@ -61,16 +61,6 @@ public class TerminalClient extends SessionClient implements Controller{
 		return super.authenticate(login, password);
 	}
 	
-	public void spin()
-	{
-		System.out.println("to make a transfer write 'transfer'");
-		System.out.println("to view your transaction history write 'history'");
-		String choice = terminalScanner.nextLine();
-		if(choice.contentEquals("transfer"))
-			transferCreator();
-		else if(choice.contentEquals("history"))
-			viewHistory();
-	}
 	
 	public void transferCreator()
 	{

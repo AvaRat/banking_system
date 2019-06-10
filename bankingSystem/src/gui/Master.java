@@ -3,7 +3,9 @@ package gui;
 import java.awt.EventQueue;
 import java.awt.event.*;
 
-import javax.swing.JFrame;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import javax.swing.*;
 
 import client.Controller;
@@ -13,6 +15,7 @@ public class Master {
 
 	private JFrame frame;
 	private Controller controller;
+	private JButton updateButton;
 
 	/**
 	 * Launch the application.
@@ -85,6 +88,15 @@ public class Master {
 		frame = new SessionWindow(this);
 		frame.setVisible(true);
 	}
+	private void updateInfo()
+	{
+		if(updateButton != null)
+			updateButton.doClick();
+	}
+	private boolean makeTransfer(int nr, double value) throws Exception
+	{
+		return controller.makeTransfer(nr, value);
+	}
 	public void showErrorInDialogWindow(String err)
 	{
 		JOptionPane.showMessageDialog(frame,
@@ -109,6 +121,10 @@ public class Master {
 	{
 		return controller.getTransferHistory();
 	}
+	private int getAccountNr() throws Exception
+	{
+		return controller.getAccountNr();
+	}
 	/**
 	 * function to open a new window for gathering signIn information
 	 */
@@ -117,7 +133,15 @@ public class Master {
 		frame.setVisible(false);
 		new SignInWindow(this); //
 	}
-	
+	private void TransferCreator()
+	{
+		frame.setVisible(false);
+		new TransferCreator(this); //
+	}
+	private void setUpdateButton(JButton b)
+	{
+		updateButton = b;
+	}
 	private void signIn(int age_, String name_, String surname_,
 			String street_, int streetNr_, String city_, String country_, String login, String password) throws Exception
 	{
@@ -167,24 +191,69 @@ public class Master {
 		}
 	}
 	public class TransferListener implements ActionListener {
-		public TransferListener()
+		JTextField accountInput;
+		JTextField valueInput;
+		JFrame transferFrame;
+		public TransferListener(JTextField nr, JTextField value, JFrame tF, JButton quitBtn)
 		{
+			accountInput = nr;
+			valueInput = value;
+			transferFrame = tF;
 			
+			quitBtn.addActionListener( new ActionListener() {
+				public void actionPerformed(ActionEvent e)
+				{
+					transferFrame.dispatchEvent(new WindowEvent(transferFrame, WindowEvent.WINDOW_CLOSING));
+					frame.setVisible(true);
+					
+				}
+			});
 		}
 		public void actionPerformed(ActionEvent event)
 		{
+			boolean success = false;
+			int accountNr = Integer.parseInt(accountInput.getText());
+			double value = Double.parseDouble(valueInput.getText());
+			try {
+				success = makeTransfer(accountNr, value);
+			}catch (Exception e)
+			{
+				showErrorInDialogWindow(e.getMessage());
+			}
+			if(success)
+			{
+				JOptionPane.showMessageDialog(frame,
+					    value+" $ sent to "+accountNr,
+					    "Information",
+					    JOptionPane.OK_OPTION);
+				transferFrame.dispatchEvent(new WindowEvent(transferFrame, WindowEvent.WINDOW_CLOSING));
+				updateInfo();
+				frame.setVisible(true);
+			}
 		}
 	}	
 	public class RefreshListener implements ActionListener {
 		JLabel customerName;
 		JLabel balanceLabel;
-		JTextField transferHistory;
+		JPanel transferHistory;
+		JLabel accountNumber;
+		JPanel place2;
 		
-		public RefreshListener(JLabel name, JTextField history, JLabel balance)
+		public RefreshListener(JLabel name, JPanel history, JLabel balance, JLabel accountNr, JButton updateButton, JButton transferBtn, JPanel p2)
 		{
 			customerName = name;
 			balanceLabel = balance;
 			transferHistory = history; 
+			accountNumber = accountNr;
+			place2 = p2;
+			
+			setUpdateButton(updateButton);
+			transferBtn.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e)
+				{
+					TransferCreator();
+				}
+			});
 		}
 		public void actionPerformed(ActionEvent event)
 		{
@@ -208,7 +277,7 @@ public class Master {
 			}
 			customerName.setText(name);
 			
-			String history = "????";
+			String history = "";
 			try {
 				history = getTransferHistory();
 			}catch (Exception e)
@@ -216,8 +285,32 @@ public class Master {
 				e.printStackTrace();
 				showErrorInDialogWindow(e.getMessage());
 			}
-			transferHistory.setText(history);
+			int accountNr = 100000;
+			try {
+				accountNr = getAccountNr();
+			}catch (Exception e)
+			{
+				e.printStackTrace();
+				showErrorInDialogWindow(e.getMessage());
+			}
+			accountNumber.setText(Integer.toString(accountNr));
+			transferHistory.add(new JLabel(history));
 			
+		/*	
+			
+			JSONArray arr = new JSONArray(controller.getTransferJSONHistory());
+			
+			for(int i=0; i<history.length(); i++)
+			{
+				JSONObject transfer = arr.getJSONObject(i);
+				JSONObject rec = transfer.getJSONObject("receiverNr");
+				JSONObject sender = transfer.getJSONObject("senderNr");
+				JTextField textField = new JTextField();
+				place2.add(textField);
+				textField.setColumns(10);
+				place2.add(textField);
+			}
+			*/
 		}
 	}
 	public class SignInListener implements ActionListener{

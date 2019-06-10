@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -12,12 +14,22 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.JScrollBar;
+import javax.swing.JList;
+import javax.swing.JTextArea;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.border.BevelBorder;
+import java.awt.Color;
+import java.awt.FlowLayout;
 
 public class SessionWindow extends JFrame {
 
 	private static final long serialVersionUID = 12343243L;
 	private JPanel contentPane;
 	private JTextField transactionHistory;
+	private JTextField textField;
+	private JTextField textField_1;
 
 
 	/**
@@ -86,10 +98,10 @@ public class SessionWindow extends JFrame {
 		contentPane.add(btnNewTransfer);
 
 		transactionHistory = new JTextField();
-		transactionHistory.setBounds(40, 84, 330, 494);
-		contentPane.add(transactionHistory);
-		transactionHistory.setColumns(10);
 		transactionHistory.setEditable(false);
+		transactionHistory.setBounds(40, 499, 549, 79);
+		contentPane.add(transactionHistory);
+		transactionHistory.setColumns(1);
 		
 		JLabel lblHistoriaOperacji = new JLabel("transfer history");
 		lblHistoriaOperacji.setFont(new Font("Tahoma", Font.PLAIN, 20));
@@ -100,7 +112,16 @@ public class SessionWindow extends JFrame {
 		btnRefresh.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		btnRefresh.setBounds(706, 304, 121, 48);
 		contentPane.add(btnRefresh);
-		Master.RefreshListener refreshListener = master.new RefreshListener(nameButton, transactionHistory, balance);
+		
+		JPanel panel_1 = new JPanel();
+		panel_1.setBounds(24, 101, 375, 360);
+		contentPane.add(panel_1);
+		panel_1.setLayout(new GridLayout(10, 1, 0, 0));
+		
+		Master.RefreshListener refreshListener = master.new RefreshListener(nameButton, panel_1, balance, AccountNr, btnRefresh, btnNewTransfer, panel_1);
+		
+	
 		btnRefresh.addActionListener(refreshListener);
+		btnRefresh.doClick();
 	}
 }

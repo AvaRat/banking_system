@@ -32,6 +32,10 @@ public class Server {
             System.exit(-1);
         }
 	}
+	public DataBase getDataBase()
+	{
+		return dataBase;
+	}
 	public String getActiveSessions()
 	{
 		StringBuilder str = new StringBuilder("active sessions\n");
