@@ -11,6 +11,11 @@ import javax.swing.*;
 import client.Controller;
 import client.SessionClient;
 
+/**
+ * Main GUI class
+ * @author marce
+ *
+ */
 public class Master {
 
 	private JFrame frame;
@@ -142,13 +147,25 @@ public class Master {
 	{
 		updateButton = b;
 	}
+	/**
+	 * sends actual sign in request
+	 * @param age_
+	 * @param name_
+	 * @param surname_
+	 * @param street_
+	 * @param streetNr_
+	 * @param city_
+	 * @param country_
+	 * @param login
+	 * @param password
+	 * @throws Exception
+	 */
 	private void signIn(int age_, String name_, String surname_,
 			String street_, int streetNr_, String city_, String country_, String login, String password) throws Exception
 	{
 		controller.signIn(age_, name_, surname_,
 			street_, streetNr_, city_, country_, login, password);
 	}
-
 	public  class AuthenticationListener implements ActionListener {
 		private JPasswordField passwordField;
 		private JTextField loginField;
@@ -159,7 +176,7 @@ public class Master {
 			loginField = l;
 		}
 		/**
-		 * if authentication succedeed old frame is dispached and new->ClientSession is created
+		 * if authentication succedeed old frame is dispached and new ClientSession is created
 		 * if failed nothing happened
 		 */
 		public void actionPerformed(ActionEvent event)
@@ -209,6 +226,9 @@ public class Master {
 				}
 			});
 		}
+		/**
+		 * new transfer prompt
+		 */
 		public void actionPerformed(ActionEvent event)
 		{
 			boolean success = false;
@@ -255,6 +275,9 @@ public class Master {
 				}
 			});
 		}
+		/**
+		 * action to refresh session
+		 */
 		public void actionPerformed(ActionEvent event)
 		{
 			double balance = 0000000;
@@ -341,7 +364,9 @@ public class Master {
 			this.loginField = loginField;
 			this.passwordField = passwordField;
 		}
-		
+		/**
+		 * sign in request frm the user
+		 */
 		public void actionPerformed(ActionEvent event)
 		{
 			try {

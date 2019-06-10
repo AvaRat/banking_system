@@ -11,11 +11,20 @@ public class Server {
 	private ArrayList<SessionServer> ActiveSessions = new ArrayList<SessionServer>();
 	public boolean listening = true;
 	
+	/**
+	 * initialize database
+	 * @param database
+	 */
 	public Server(DataBase database)
 	{
 		dataBase = database;
 	}
 	
+	/**
+	 * loop that accepts all connections and create SessionServer thread to handle it
+	 * @param portNumber port where server will listen
+	 * @throws IOException
+	 */
 	public void spin(int portNumber) throws IOException
 	{
         try (ServerSocket serverSocket = new ServerSocket(portNumber)) {
@@ -32,10 +41,18 @@ public class Server {
             System.exit(-1);
         }
 	}
+	/**
+	 * 
+	 * @return 
+	 */
 	public DataBase getDataBase()
 	{
 		return dataBase;
 	}
+	/**
+	 * 
+	 * @return List of all created sessions as a String
+	 */
 	public String getActiveSessions()
 	{
 		StringBuilder str = new StringBuilder("active sessions\n");

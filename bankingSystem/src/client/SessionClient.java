@@ -32,6 +32,11 @@ public class SessionClient implements Controller{
 			throw new IOException("connection Failed, try again");
 		}
 	}
+	/**
+	 * try to connect to remote server
+	 * @return true when connected successfully false when failed
+	 * @throws Exception
+	 */
 	private boolean startConnection() throws Exception
 	{
 		try {
@@ -53,10 +58,9 @@ public class SessionClient implements Controller{
 	/**
 	 * @param login
 	 * @param password
-	 * @throws Exception, too many attempts failed
+	 * @throws Exception  too many attempts failed
 	 * 
-	 * @return true->successful
-	 * @return false->failed to authenticate
+	 * @return true true when successful false when failed
 	 */
 	public boolean authenticate(String login, String password) throws Exception
 	{
@@ -78,7 +82,9 @@ public class SessionClient implements Controller{
 				return false;				
 		return true;	
 	}
-	
+	/**
+	 * close connection with a server
+	 */
 	public void stopConnection() throws IOException
 	{
 		in.close();
@@ -86,7 +92,9 @@ public class SessionClient implements Controller{
 		clientSocket.close();
 	}
 	/**
-	 * @TODO
+	 * @param accountNr
+	 * @param value
+	 * @throws Exception error message
 	 */
 	public boolean makeTransfer(int accountNr, double value) throws Exception
 	{
@@ -153,7 +161,9 @@ public class SessionClient implements Controller{
 				throw e;
 		}
 	}
-	
+	/**
+	 * @return transfer history as a string
+	 */
 	public String getTransferHistory() throws Exception
 	{
 		JSONObject msg = new JSONObject();
@@ -166,7 +176,9 @@ public class SessionClient implements Controller{
 			return response.getString("value");
 	}
 
-
+	/**
+	 * @return transfer history as a JSONArray
+	 */
 	public JSONArray getTransferJSONHistory() throws Exception
 	{
 		JSONObject msg = new JSONObject();
@@ -176,7 +188,11 @@ public class SessionClient implements Controller{
 			throw new Exception("JSON value is not an array");
 		return response.getJSONArray("value");
 	}
-	
+	/**
+	 * 
+	 * @param msg
+	 * @return string representing JSONObject response
+	 */
  	private String sendAndReceive(String msg)
 	{
 		this.out.println(msg);
@@ -189,7 +205,9 @@ public class SessionClient implements Controller{
 			return e.getMessage();
 		}
 	}
-	@Override
+ 	/**
+ 	 * function to create new user
+ 	 */
 	public void signIn(int age, String name, String surname, String street, int streetNr, String city,
 			String country, String login, String password) throws JSONException, IOException, Exception 
 	{

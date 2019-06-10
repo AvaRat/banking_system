@@ -1,6 +1,5 @@
 package model;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,6 +12,12 @@ public class Transfer {
 	private double value;
 	private Date date;
 	
+	/**
+	 * 
+	 * @param sen Customer who sends money
+	 * @param rec	Customer who receives money
+	 * @param val	amount of money sent
+	 */
 	public Transfer(Customer sen, Customer rec, double val)
 	{
 		senderNr = sen.getNr();
@@ -20,6 +25,10 @@ public class Transfer {
 		value = val;
 		date = new Date();
 	}
+	/**
+	 * creates new transfer when dataBase is loaded from JSON file
+	 * @param ob JSON object representing Transfer
+	 */
 	public Transfer(JSONObject ob)
 	{
 		//Jun 9, 2019 10:59:10 PM"
@@ -35,19 +44,34 @@ public class Transfer {
 		}
 	}
 
-	
+	/**
+	 * 
+	 * @return sender account number
+	 */
 	public int getSenderNr()
 	{
 		return senderNr;
 	}
+	/**
+	 * 
+	 * @return receiver account number
+	 */
 	public int getReceiverNr()
 	{
 		return receiverNr;
 	}
+	/**
+	 * 
+	 * @return	amount of money transfered
+	 */
 	public double getValue()
 	{
 		return value;
 	}
+	/**
+	 * 
+	 * @return date, when transaction was made
+	 */
 	public Date getDate()
 	{
 		return date;

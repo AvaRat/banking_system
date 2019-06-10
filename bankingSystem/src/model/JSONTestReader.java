@@ -13,7 +13,11 @@ public class JSONTestReader {
 	{
 		path = p;
 	}
-	
+	/**
+	 * reads JSON file and return ArrayList with clients created from this JSON
+	 * @return
+	 * @throws Exception
+	 */
 	public ArrayList<Customer> readJSONFull() throws Exception 
 	{
 		File file = new File(path);
@@ -31,7 +35,11 @@ public class JSONTestReader {
 		}
 		return clientList;
 	}
-	
+	/**
+	 *  reads JSON file and return ArrayList with personal data created from this JSON
+	 * @return
+	 * @throws Exception
+	 */
 	
 	public ArrayList<Person> readJSON() throws Exception 
 	{

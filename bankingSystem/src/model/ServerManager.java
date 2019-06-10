@@ -11,13 +11,18 @@ import javax.swing.JButton;
 import javax.swing.SwingConstants;
 import javax.swing.JTextArea;
 
+/**
+ * class to manage server while it's in infinite a loop
+ * @author marce
+ *
+ */
 public class ServerManager extends Thread {
 
 	private JFrame frame;
 	private Server server;
 
 	/**
-	 * Launch the application.
+	 * Launch the manager
 	 */
 	public ServerManager(Server s) 
 	{
